@@ -10,8 +10,19 @@ from products.models import Product
 # pending payment
 # witdrawal - each witdrawal
 
+
+
+class RevenueType(models.Model):
+    #ByOrder or ByDeposit
+    name = models.CharField(max_length=120)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
 class Revenue(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='revenue_user')
+    revenue_type = models.ForeignKey(RevenueType, on_delete=models.DO_NOTHING, blank=True, null=True)
     amount = models.DecimalField(max_digits=100, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
@@ -28,20 +39,11 @@ class Witdrawal(models.Model):
     def __str__(self):
         return '{} - {}'.format(self.user.username, self.amount)
 
-class Payment(models.Model):
-    paid_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_by_user')
-    payment_for = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return '{} - {}'.format(self.paid_by, self.paid_to)
-
 @receiver(post_save, sender=Revenue)
 def update_user_revenue(sender, instance, created, **kwargs):
     user = User.objects.get(pk=instance.user.pk)
     if instance.approved and created:
-        if instance.pending:
+        if not instance.approved:
             user.pending_payments += instance.amount
         else:
             user.revenue += instance.amount

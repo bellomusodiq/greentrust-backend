@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 AUTH_USER_MODEL = 'accounts.User'
+WEBSOCKET_HOST = '*'
+WEBSOCKET_PORT = '6001'
 
 # Application definition
 
@@ -41,8 +43,9 @@ INSTALLED_APPS = [
     'payments',
     # 'orders',
     'products',
-
-    'rest_framework'
+    'corsheaders',
+    'rest_framework',
+    'djwebsockets'
 ]
 
 MIDDLEWARE = [
@@ -53,7 +56,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 
 ROOT_URLCONF = 'backend.urls'
 

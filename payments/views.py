@@ -5,7 +5,7 @@ from .serializers import WitdrawalSerializer, RevenueSerializer, PaymentSerializ
 # Create your views here.
 
 class RevenueViewSet(ModelViewSet):
-    queryset = Revenue.objects.all()
+    queryset = Revenue.objects.all()[:10]
     serializer_class = RevenueSerializer
 
 class WitdrawalViewSet(ModelViewSet):
